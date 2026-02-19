@@ -1,11 +1,17 @@
 import { useNavigate } from 'react-router-dom'
 
-export default function Sidebar({ role, tabs, activeTab, onTabChange, open }) {
+export default function Sidebar({ role, tabs, activeTab, onTabChange, open, onClose }) {
   const navigate = useNavigate()
   const isGov = role === 'gov'
 
   return (
-    <aside className={`sidebar${open ? '' : ' hidden'}`}>
+    <>
+      {/* Backdrop overlay — tap to close on mobile */}
+      <div
+        className={`sidebar-overlay${open ? ' visible' : ''}`}
+        onClick={onClose}
+      />
+      <aside className={`sidebar${open ? ' open' : ' hidden'}`}>
       <div className="sidebar-brand">
         <span style={{ color:'var(--accent)' }}>⚡</span>
         <span>ExpressScheme</span>
@@ -44,5 +50,6 @@ export default function Sidebar({ role, tabs, activeTab, onTabChange, open }) {
         </span>
       </div>
     </aside>
+    </>
   )
 }

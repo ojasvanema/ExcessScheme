@@ -31,6 +31,7 @@ const STEPS = [
 export default function Landing() {
   const [loginRole, setLoginRole] = useState(null)
   const [scrolled, setScrolled] = useState(false)
+  const [navOpen, setNavOpen] = useState(false)
   const countersRef = useRef(null)
   const [counters, setCounters] = useState(STATS.map(() => 0))
   const animatedRef = useRef(false)
@@ -97,9 +98,27 @@ export default function Landing() {
             <a href="#ai">AI Verify</a>
             <a href="#login" className="btn-nav">Launch App →</a>
           </div>
-          <ThemeToggle />
+          <div style={{ display:'flex', alignItems:'center', gap:'.75rem' }}>
+            <ThemeToggle />
+            <button
+              className={`nav-hamburger${navOpen ? ' open' : ''}`}
+              onClick={() => setNavOpen(o => !o)}
+              aria-label="Menu"
+            >
+              <span /><span /><span />
+            </button>
+          </div>
         </div>
       </nav>
+
+      {/* MOBILE NAV DRAWER */}
+      <div className={`nav-mobile-drawer${navOpen ? ' open' : ''}`}>
+        <a href="#how-it-works" onClick={() => setNavOpen(false)}>How It Works</a>
+        <a href="#features"     onClick={() => setNavOpen(false)}>Features</a>
+        <a href="#ai"           onClick={() => setNavOpen(false)}>AI Verify</a>
+        <button className="btn-nav-mobile" onClick={() => { setNavOpen(false); setLoginRole('gov') }}>🏛️ Gov Officer Login</button>
+        <button className="btn-nav-mobile" style={{ marginTop:'.5rem', background:'rgba(0,232,198,.12)', color:'var(--accent)' }} onClick={() => { setNavOpen(false); setLoginRole('user') }}>🎓 Student Portal</button>
+      </div>
 
       {/* HERO */}
       <section className="hero">

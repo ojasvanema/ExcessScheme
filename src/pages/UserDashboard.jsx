@@ -58,7 +58,7 @@ function TrustGauge({ score = 87 }) {
 
 export default function UserDashboard() {
   const [tab, setTab] = useState('overview')
-  const [sidebarOpen, setSidebarOpen] = useState(true)
+  const [sidebarOpen, setSidebarOpen] = useState(window.innerWidth > 1024)
   const [browseFilter, setBrowseFilter] = useState('')
   const [tokens, setTokens] = useState(MY_TOKENS)
   const [applyModal, setApplyModal] = useState(null)
@@ -88,8 +88,9 @@ export default function UserDashboard() {
         role="user"
         tabs={TABS}
         activeTab={tab}
-        onTabChange={setTab}
+        onTabChange={id => { setTab(id); if (window.innerWidth <= 1024) setSidebarOpen(false) }}
         open={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
       />
       <div className="dash-main">
         {/* TOPBAR */}

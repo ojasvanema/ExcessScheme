@@ -74,7 +74,7 @@ function DonutChart({ value = 73 }) {
 
 export default function GovDashboard() {
   const [tab, setTab] = useState('overview')
-  const [sidebarOpen, setSidebarOpen] = useState(true)
+  const [sidebarOpen, setSidebarOpen] = useState(window.innerWidth > 1024)
   const [schemeFilter, setSchemeFilter] = useState('')
   const [appFilter, setAppFilter] = useState('all')
   const [mintAmount, setMintAmount] = useState(50)
@@ -97,8 +97,9 @@ export default function GovDashboard() {
         role="gov"
         tabs={TABS}
         activeTab={tab}
-        onTabChange={setTab}
+        onTabChange={id => { setTab(id); if (window.innerWidth <= 1024) setSidebarOpen(false) }}
         open={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
       />
       <div className="dash-main">
         {/* TOPBAR */}
