@@ -113,6 +113,12 @@ export default function GovDashboard() {
               <input type="text" placeholder="Search schemes, students…" />
             </div>
             <div className="topbar-chain"><span className="chain-dot"></span>Chain: Active</div>
+            <button
+              onClick={() => navigate('/wallet')}
+              style={{ background:'rgba(0,232,198,.12)', color:'var(--accent)', border:'1px solid rgba(0,232,198,.3)', borderRadius:'7px', padding:'.38rem .85rem', fontSize:'.82rem', fontWeight:600, cursor:'pointer', display:'flex', alignItems:'center', gap:'.35rem', whiteSpace:'nowrap' }}
+            >
+              ◎ Wallet
+            </button>
             <ThemeToggle />
           </div>
         </div>

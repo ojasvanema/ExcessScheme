@@ -36,8 +36,7 @@ import {
 } from '../lib/algorand'
 import '../styles/wallet.css'
 
-// ─── Demo address (pre-loaded in view-only mode) ─────────────────────────────
-const DEMO_ADDRESS = 'JN6CWSZOAYYVHJSGXLVXP5ESHQRQXBGH55MY6HHTAOYY7ACF3JY2SWJ4DU'
+// No demo address — show a proper connect screen when no wallet is linked
 
 // ─── Transaction type labels ─────────────────────────────────────────────────
 const TX_LABELS = {
@@ -128,24 +127,18 @@ export default function WalletDashboard() {
       .finally(() => setLoadingAsts(false))
   }, [account])
 
-  // ── On mount: try to reconnect or load demo ────────────────────────────────
+  // ── On mount: try to restore existing WalletConnect session ────────────────
   useEffect(() => {
     async function init() {
-      // Try WalletConnect session restore
       try {
         const addr = await reconnectWallet()
         if (addr) {
           setAddress(addr)
           setIsDemo(false)
           fetchData(addr)
-          return
         }
-      } catch { /* no session */ }
-
-      // Fall back to demo address (view-only)
-      setAddress(DEMO_ADDRESS)
-      setIsDemo(true)
-      fetchData(DEMO_ADDRESS)
+        // No session → address stays null → connect screen shown
+      } catch { /* no prior session */ }
     }
     init()
   }, [fetchData])
@@ -176,12 +169,13 @@ export default function WalletDashboard() {
   // ── Disconnect wallet ────────────────────────────────────────────────────
   async function handleDisconnect() {
     await disconnectWallet()
-    setAddress(DEMO_ADDRESS)
-    setIsDemo(true)
+    setAddress(null)
+    setIsDemo(false)
     setAccount(null)
     setTxns([])
     setAssets([])
-    fetchData(DEMO_ADDRESS)
+    setAcctError(null)
+    setTxnsError(null)
   }
 
   // ── Refresh data ──────────────────────────────────────────────────────────
@@ -215,32 +209,22 @@ export default function WalletDashboard() {
               <span className="wd-title-icon">◎</span> Algorand Wallet
             </h1>
             <p className="wd-subtitle">
-              {isDemo
-                ? 'Viewing demo address — connect your wallet for full access'
-                : 'Connected via Pera Wallet on TestNet'}
+              {address
+                ? 'Connected via Pera Wallet · Algorand TestNet'
+                : 'Connect your Pera Wallet to view your TestNet account'}
             </p>
           </div>
           <div className="wd-header-actions">
-            {!isDemo ? (
-              <button className="wd-btn wd-btn-ghost" onClick={handleDisconnect}>
-                ⏏ Disconnect
-              </button>
+            {address ? (
+              <>
+                <button className="wd-btn wd-btn-ghost" onClick={handleDisconnect}>⏏ Disconnect</button>
+                <button className="wd-btn wd-btn-ghost" onClick={handleRefresh} title="Refresh">↺</button>
+              </>
             ) : (
-              <button
-                className="wd-btn wd-btn-primary"
-                onClick={handleConnect}
-                disabled={connecting}
-              >
-                {connecting ? (
-                  <><span className="wd-spinner" /> Connecting…</>
-                ) : (
-                  '🔗 Connect Pera Wallet'
-                )}
+              <button className="wd-btn wd-btn-primary" onClick={handleConnect} disabled={connecting}>
+                {connecting ? <><span className="wd-spinner" /> Connecting…</> : '🔗 Connect Pera Wallet'}
               </button>
             )}
-            <button className="wd-btn wd-btn-ghost" onClick={handleRefresh} title="Refresh">
-              ↺
-            </button>
           </div>
         </div>
 
@@ -252,42 +236,60 @@ export default function WalletDashboard() {
           </div>
         )}
 
-        {/* ── Demo banner ─────────────────────────────── */}
-        {isDemo && (
-          <div className="wd-demo-banner">
-            <span>👁 View-only mode — showing demo address</span>
-            <code>{shortAddr(DEMO_ADDRESS)}</code>
-            <span>Connect Pera Wallet to use your own account.</span>
+        {/* ── Not connected: big connect screen ────────────────── */}
+        {!address && (
+          <div className="wd-connect-screen">
+            <div className="wd-connect-orb">◎</div>
+            <h2 className="wd-connect-title">Connect your Algorand Wallet</h2>
+            <p className="wd-connect-sub">
+              Use Pera Wallet on TestNet to view your ALGO balance,
+              recent transactions, and owned assets.
+            </p>
+            <button
+              className="wd-btn wd-btn-primary wd-btn-lg"
+              onClick={handleConnect}
+              disabled={connecting}
+            >
+              {connecting
+                ? <><span className="wd-spinner" /> Waiting for Pera Wallet…</>
+                : '🔗 Connect Pera Wallet'
+              }
+            </button>
+            <div className="wd-connect-steps">
+              <div className="wd-step"><span>1</span>Open Pera Wallet on your phone</div>
+              <div className="wd-step"><span>2</span>Scan the QR code or approve the deep-link</div>
+              <div className="wd-step"><span>3</span>Your TestNet data loads automatically</div>
+            </div>
+            <a className="wd-faucet-link" href="https://bank.testnet.algorand.network/" target="_blank" rel="noreferrer">
+              🚰 Need TestNet ALGO? Use the faucet →
+            </a>
           </div>
         )}
 
-        {/* ── Address card ────────────────────────────── */}
-        <div className="wd-address-card">
-          <div className="wd-address-left">
-            <div className="wd-avatar">
-              {address ? address.slice(0, 2) : '??'}
-            </div>
-            <div>
-              <div className="wd-address-label">Wallet Address</div>
-              <div className="wd-address-full">
-                <code title={address}>{address ?? '—'}</code>
+        {/* ── Address card (only when connected) ──────────────── */}
+        {address && (
+          <div className="wd-address-card">
+            <div className="wd-address-left">
+              <div className="wd-avatar">{address.slice(0, 2)}</div>
+              <div>
+                <div className="wd-address-label">Wallet Address</div>
+                <div className="wd-address-full"><code title={address}>{address}</code></div>
+                <div className="wd-address-short">{shortAddr(address)}</div>
               </div>
-              <div className="wd-address-short">{address ? shortAddr(address) : '—'}</div>
+            </div>
+            <div className="wd-address-right">
+              <button className="wd-copy-btn" onClick={copyAddress}>
+                {copied ? '✓ Copied' : '⎘ Copy'}
+              </button>
+              {network?.lastRound && (
+                <div className="wd-block-info">Block <strong>#{network.lastRound.toLocaleString()}</strong></div>
+              )}
             </div>
           </div>
-          <div className="wd-address-right">
-            <button className="wd-copy-btn" onClick={copyAddress} disabled={!address}>
-              {copied ? '✓ Copied' : '⎘ Copy'}
-            </button>
-            {network?.lastRound && (
-              <div className="wd-block-info">
-                Block <strong>#{network.lastRound.toLocaleString()}</strong>
-              </div>
-            )}
-          </div>
-        </div>
+        )}
 
-        {/* ── Tab navigation ───────────────────────────── */}
+        {/* ── Tab navigation (only when connected) ────────────── */}
+        {address && (
         <div className="wd-tabs">
           {[
             { id: 'overview',     label: '◈ Overview'     },
@@ -303,11 +305,12 @@ export default function WalletDashboard() {
             </button>
           ))}
         </div>
+        )}
 
         {/* ══════════════════════════════════════════════
-            TAB: OVERVIEW
+            TABS — only shown when wallet is connected
         ══════════════════════════════════════════════ */}
-        {tab === 'overview' && (
+        {address && tab === 'overview' && (
           <div className="wd-overview">
 
             {/* ALGO Balance card */}
@@ -399,7 +402,7 @@ export default function WalletDashboard() {
         {/* ══════════════════════════════════════════════
             TAB: TRANSACTIONS
         ══════════════════════════════════════════════ */}
-        {tab === 'transactions' && (
+        {address && tab === 'transactions' && (
           <div className="wd-panel">
             <div className="wd-panel-header">
               Last 10 Transactions
@@ -435,7 +438,7 @@ export default function WalletDashboard() {
         {/* ══════════════════════════════════════════════
             TAB: ASSETS
         ══════════════════════════════════════════════ */}
-        {tab === 'assets' && (
+        {address && tab === 'assets' && (
           <div className="wd-panel">
             <div className="wd-panel-header">
               Held Assets
