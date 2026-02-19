@@ -225,7 +225,7 @@ export default function Landing() {
             <button className="btn-ghost"   onClick={() => setLoginRole('user')}>🎓 Student Portal</button>
             <button
               onClick={() => navigate('/wallet')}
-              style={{ background:'rgba(0,232,198,.12)', color:'var(--accent)', border:'1px solid rgba(0,232,198,.4)', borderRadius:'10px', padding:'.65rem 1.4rem', fontSize:'.95rem', fontWeight:600, cursor:'pointer', display:'inline-flex', alignItems:'center', gap:'.4rem', backdropFilter:'blur(8px)' }}
+              style={{ background:'rgba(0,232,198,.12)', color:'#ffffff', border:'1px solid rgba(0,232,198,.4)', borderRadius:'10px', padding:'.65rem 1.4rem', fontSize:'.95rem', fontWeight:600, cursor:'pointer', display:'inline-flex', alignItems:'center', gap:'.4rem', backdropFilter:'blur(8px)' }}
             >
               ◎ Algorand Wallet
             </button>
