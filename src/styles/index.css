@@ -439,9 +439,14 @@ img { display:block; max-width:100%; }
   color: var(--accent);
   font-weight: 600;
   font-size: .875rem;
-  transition: gap .2s;
+  transition: gap .2s, letter-spacing .2s;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  font-family: var(--font);
 }
-.feature-link:hover { letter-spacing: .02em; }
+.feature-link:hover { letter-spacing: .04em; }
 
 /* ── AI SPLIT ── */
 .ai-split {
