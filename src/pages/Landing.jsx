@@ -223,6 +223,12 @@ export default function Landing() {
           <div className="hero-cta">
             <button className="btn-primary" onClick={() => setLoginRole('gov')}>🏛️ Gov Officer Login</button>
             <button className="btn-ghost"   onClick={() => setLoginRole('user')}>🎓 Student Portal</button>
+            <button
+              onClick={() => navigate('/wallet')}
+              style={{ background:'rgba(0,232,198,.12)', color:'var(--accent)', border:'1px solid rgba(0,232,198,.4)', borderRadius:'10px', padding:'.65rem 1.4rem', fontSize:'.95rem', fontWeight:600, cursor:'pointer', display:'inline-flex', alignItems:'center', gap:'.4rem', backdropFilter:'blur(8px)' }}
+            >
+              ◎ Algorand Wallet
+            </button>
           </div>
           <div className="hero-stats" ref={countersRef}>
             {STATS.map((s, i) => (
