@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import NetworkCanvas from '../components/NetworkCanvas'
+import Sparkles from '../components/Sparkles'
 import ThemeToggle from '../components/ThemeToggle'
 import LoginModal from '../components/LoginModal'
 
@@ -77,6 +78,11 @@ export default function Landing() {
   return (
     <div>
       <NetworkCanvas />
+      <Sparkles />
+      {/* ambient bg orbs */}
+      <div className="bg-orb bg-orb-1" />
+      <div className="bg-orb bg-orb-2" />
+      <div className="bg-orb bg-orb-3" />
 
       {/* NAVBAR */}
       <nav className="navbar" style={scrolled ? { borderBottomColor:'var(--border)' } : {}}>
@@ -172,7 +178,7 @@ export default function Landing() {
           <p className="section-sub">Built for scale, trust, and total transparency.</p>
           <div className="features-grid">
             {FEATURES.map(f => (
-              <div key={f.title} className={`feature-card${f.featured ? ' featured' : ''}`}>
+              <div key={f.title} className={`feature-card glow-card${f.featured ? ' featured' : ''}`}>
                 {f.featured && <div className="feature-glow"></div>}
                 <div className="feature-icon">{f.icon}</div>
                 <h3>{f.title}</h3>
@@ -245,7 +251,7 @@ export default function Landing() {
             Two portals, one platform — built for government officers and students alike.
           </p>
           <div className="login-cards">
-            <div className="login-card login-gov" onClick={() => setLoginRole('gov')}>
+            <div className="login-card glow-card login-gov" onClick={() => setLoginRole('gov')}>
               <div className="lcard-bg"></div>
               <div className="lcard-icon">🏛️</div>
               <h3>Government Officer</h3>
@@ -257,7 +263,7 @@ export default function Landing() {
               </ul>
               <div className="lcard-btn"><span>Login as Gov Officer</span><span>→</span></div>
             </div>
-            <div className="login-card login-user" onClick={() => setLoginRole('user')}>
+            <div className="login-card glow-card login-user" onClick={() => setLoginRole('user')}>
               <div className="lcard-bg"></div>
               <div className="lcard-icon">🎓</div>
               <h3>Student / Applicant</h3>
