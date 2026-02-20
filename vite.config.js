@@ -8,7 +8,15 @@ export default defineConfig({
     // Polyfill Node.js globals (Buffer, process, etc.) needed by @perawallet/connect + algosdk
     nodePolyfills({ include: ['buffer', 'process', 'stream', 'util', 'events'] }),
   ],
-  server: { port: 3000 },
+  server: {
+    port: 3000,
+    proxy: {
+      '/api': {
+        target: 'http://localhost:3001',
+        changeOrigin: true,
+      },
+    },
+  },
   optimizeDeps: {
     include: ['@perawallet/connect', 'algosdk'],
   },
